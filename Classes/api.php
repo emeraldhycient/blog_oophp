@@ -12,21 +12,17 @@ class Api {
         $this->con = new mysqli("localhost","root","","blog");
     }
        
-    public function index(){
-        $sql = " SELECT * FROM blog
-        ORDER BY RAND()
-        LIMIT 5";
+    public function mainpost(){
+        $sql = "SELECT * FROM blog";
         $q = $this->con->query($sql);
         if($q){
-            if($q->num_rows > 0){
-                $data = [];
-               $data = $q->fetch_object();
-               return $data;
+            if($q->num_rows > 1){
+               return $q;
             }else{
             return array("data" => "no row found" );
             }
         }else{
-            return array("data" => $q->con->error);
+            return array("error" => $this->con->error);
         }
     }
     public function entrypost(){

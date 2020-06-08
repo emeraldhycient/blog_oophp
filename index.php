@@ -20,9 +20,11 @@
     <div class="row">
     <div class="col-md-2"> </div>
     <div class="col-md-7">
-    <div class="uppernews">
-          </div>       
+    <div class="uppernews mb-5">
+          </div>  
+          <center><h4>Featured Post</h4></center>     
            <div class="mainnews">
+           
           </div>
         </div>
         <div class="col-md-3 p-3">
@@ -57,6 +59,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script>
        $(document).ready(()=>{
+
            $.ajax({
                url:"./Classes/controller.php",
                method:"post",
@@ -65,15 +68,20 @@
                     $(".uppernews").append(data) ; 
                }
            })
+           
+
+
+           
 
            $.ajax({
                url:"./Classes/controller.php",
                method:"post",
-               data:{"index":"index"},
-               success : data=>{
-                    $(".mainnews").append(data) ; 
+               data:{"mainpost":"mainpost"},
+               success : output=>{
+                   $(".mainnews").html(output)
                }
            })
+
        });
     </script>
 </body>

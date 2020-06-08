@@ -4,11 +4,22 @@ include_once "api.php";
 
 $api = new api();
 
-if(isset($_POST["index"]))
+if(isset($_POST["mainpost"]))
 {
-    $datas = $api->index();
-    while ($datas){
-        echo "<p>'.$datas->title.'</p>";
+    $rows =$api->mainpost();
+    while($row = mysqli_fetch_object($rows)){
+        $data = '
+        <hr>
+         <div class="mb-2">
+               <img src="./blogphoto/'.$row->photo.'" class="img-thumbnail" style="width:120px;10p%;float:right;">
+         <div class="">
+         <h6>'.$row->title.'</h6>
+            <p><small>'. substr($row->textz,0,100).'</small><a href="./views/mainview.php?id='.$row->id.'">..readmore</a></p>
+           <p><strong class="text-danger">Author:</strong><small class="pl-5 text-info">'.$row->date.'</small></p>
+         </div>
+         </div>
+        ';
+        echo $data;
     }
 }
 
