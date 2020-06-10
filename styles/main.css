@@ -21,6 +21,6 @@ nav {
 
 #indexanchor {
     list-style-type: none;
+    display: flex;
+    align-items: center;
 }
-
-

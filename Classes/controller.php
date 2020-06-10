@@ -4,33 +4,117 @@ include_once "api.php";
 
 $api = new api();
 
+// submit comments
+
+if(isset($_POST["comment"])){
+    echo "success";
+}
+
+// fetch all coment native to a single post
+if(isset($_POST["post_id_in_comment"]))
+{
+    $id = $api->filter($_POST["post_id_in_comment"]);
+    $rows = $api->allcomment($id);
+    if($rows["message"] == "success"){
+        $temp = '
+        <div class="card">
+        <div class="card-header">
+        <h4>'.$rows["data"]->commentor.'</h4>
+        </div>
+<div class="card-body">
+<p>'.$rows["data"]->comment.'</p>
+</div>
+<div class="card-footer">
+<p>'.$rows["data"]->email.'</p> 
+</div>
+        </div>
+        ';
+        echo $temp;
+    }else{
+        echo  json_encode($rows);
+    }
+}
+
+//fetching related post in singleview page
+     if(isset($_POST["relatedpost"])){
+        $rows =$api->relatedpost();
+        while($row = mysqli_fetch_object($rows)){
+            $data = '
+            <hr>
+             <div class="mb-2">
+                   <img src="../blogphoto/'.$row->photo.'" class="img-thumbnail" style="width:120px;10p%;float:right;">
+             <div class="">
+             <h6>'.$row->title.'</h6>
+                <p><small>'. substr($row->textz,0,100).'</small><a href="./views/mainview.php?id='.$row->id.'">..readmore</a></p>
+               <p><strong class="text-danger">Author:</strong><small class="pl-5 text-info">'.$row->date.'</small></p>
+             </div>
+             </div>
+            ';
+            echo $data;
+        }
+     }
+
+// fetchin post for index page
 if(isset($_POST["mainpost"]))
 {
     $rows =$api->mainpost();
     while($row = mysqli_fetch_object($rows)){
         $data = '
         <hr>
-         <div class="mb-2">
-               <img src="./blogphoto/'.$row->photo.'" class="img-thumbnail" style="width:120px;10p%;float:right;">
-         <div class="">
-         <h6>'.$row->title.'</h6>
-            <p><small>'. substr($row->textz,0,100).'</small><a href="./views/mainview.php?id='.$row->id.'">..readmore</a></p>
-           <p><strong class="text-danger">Author:</strong><small class="pl-5 text-info">'.$row->date.'</small></p>
-         </div>
-         </div>
+         <div>
+         <div class="card">
+         <div class="card-header">
+                         <h6>'.$row->title.'</h6>
+                         <p><small>authour:</small><small class="p-2">'.$row->date.'</small><small>Category: '.$row->cat.'</small></p>
+                         </div>
+                         <div class="card-body">
+                        <img src="./blogphoto/'.$row->photo.'" class="img-thumbnail" style="width:100%;height:300px">
+                        <p><small>'. substr($row->textz,0,100).'</small><a href="./views/mainview.php?id='.$row->id.'">..readmore</a></p>
+                        </div></div><br>
+                        </div>
         ';
         echo $data;
     }
 }
 
+// fetching post when readmore is clicked
+if(isset($_POST["postid"])){
+    $id = $api->filter($_POST["postid"]);
+    $rows = $api->single($id);
+        $temp = '
+        <div>
+        <div class="card">
+        <div class="card-header">
+                        <h6>'.$rows->title.'</h6>
+                        <p><small>authour:</small><small class="p-2">'.$rows->date.'</small><small>Category: '.$rows->cat.'</small></p>
+                        </div>
+                        <div class="card-body">
+                       <img src="../blogphoto/'.$rows->photo.'" class="img-thumbnail" style="width:100%;height:300px">
+                       <p>'.$rows->textz.'</p>
+                       </div></div><br>
+                       <h6>leave a comment *</h6>
+                       <form method="post" action="../classes/controller.php" class="form-group"  id="commentform">
+                       <input type="text" class="form-control" name="commentor" placeholder="name"><br>
+                       <input type="email" class="form-control" name="email" placeholder="email"><br>
+                       <textarea class="form-control" name="comment" placeholder="comment...."></textarea><br>
+                       <input type="hidden" name="postid" value="'.$rows->id.'" >
+                       <input type="submit" name="submit" class="btn btn-info">
+                       </form>
+                       </div>
+        ';
+        echo $temp;
+}
+
+// refreshing post in the index page
 if(isset($_POST["single"])){
     
     $datas = $api->entrypost();
     $data = '
-    <div >
-    <div>
+    <div class="card">
+    <div class="card-header">
     <h4 class="m-auto p-2">'.$datas->title.'</h4>
     </div>
+    <div class="card-body">
           <div class="img">
           <img src="./blogphoto/'.$datas->photo.'" class="img-thumbnail" style="width:100%;height:300px;">
           </div>
@@ -38,21 +122,24 @@ if(isset($_POST["single"])){
           <p><strong>author</strong><small class="pl-3">'.$datas->date.'</small></p>
           <p>'.$datas->textz.'</p>
           </div>
+          </div>
     </div>
     ';
    echo $data;
+   
 }
 
+// logout
 if(isset($_GET["logout"])){
       $api->logout();
 }
-
+// login
 if(isset($_POST["login"])){
         $email = $_POST["email"];
         $pass = $_POST["pass"];
         $api->login($api->filter($email),$api->filter($pass));
 }
-
+// registeration
 if(isset($_POST["register"])){
     if(isset($_FILES["avatar"])){
     $fname = $api->filter($_POST["fname"]);
