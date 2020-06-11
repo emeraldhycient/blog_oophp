@@ -14,8 +14,11 @@
 <body>
     <header>
         <nav>
-            <div class="container">
-                <h1 id="brand" class="p-2">Raldblog</h1>
+        <div class="container">
+                <h4 id="brand" class="p-2">Raldblog</h4>
+                <div style="float:right;margin-top:-50px;">
+                  <h6 class="p-2"><a href="../views/login.php">Dashboard<i class="fa fa-users pl-2"></i></a></h6>
+                </div>
             </div>
         </nav>
     </header>
@@ -85,7 +88,6 @@
                        $(".conz").html(data)
                     }
                 })
-
 
         });
     </script>

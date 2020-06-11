@@ -86,7 +86,7 @@ class Api {
         $data= [];
         if($q){
               if($q->num_rows > 0){
-                 $data["data"] = $q->fetch_object();
+                 $data["data"] = $q;
                  $data["message"] = "success";
               }else{
                   $data["message"] = "no comments found";
@@ -98,8 +98,20 @@ class Api {
     }
     
     // submit comment
-    public function submitcomment($commetor,$comment,$email){
-        
+    public function submitcomment($commentor,$comment,$email,$postid){
+        $email = $this->filter($email);
+        $comment = $this->filter($comment);
+        $commentor = $this->filter($commentor);
+        $postid = $this->filter($postid);
+        $sql = "INSERT INTO comment (email,comment,commentor,postid) VALUES ('$email','$comment','$commentor','$postid')";
+        $q =$this->con->query($sql);
+        $data = [];
+        if($q){
+            $data["message"] = "comment uploaded successfully";
+        }else{
+            $data["message"] = $this->con->error;
+        }
+        return $data;
     }
     //regsiteration
     public function register($id,$fname,$lname,$username,$email,$phone,$profession,$skill,$pass,$avatar){
@@ -125,12 +137,7 @@ class Api {
         if($q->num_rows > 0){
             while($row = $q->fetch_object()){
                 if(password_verify($password,$row->pass)){
-                      if($row->role === "admin"){
-                          $_SESSION["blogid"] = $row->unqid;
-                          $_SESSION["username"]  = $row->username;                       
-                                echo "<script>window.location.href='../views/dashboard.php'</script>";
-                        }else{
-                      }$_SESSION["id"] = $row->unqid;
+                      $_SESSION["blogid"] = $row->unqid;
                       $_SESSION["username"]  = $row->username;                       
                       echo "<script>window.location.href='../views/dashboard.php'</script>";
                     }else{
@@ -152,7 +159,7 @@ class Api {
        return "<script>window.location.href='./index.php'</script>";
     }
 
-    // filter post input
+    // filter  input
 public function filter($hackvar){
     $hackvar = trim($hackvar);
     $hackvar = stripslashes($hackvar);

@@ -1,11 +1,3 @@
-<?php 
-session_start();
-
-if(isset($_SESSION["blogid"])){
-    header("location: dashboard.php");
-}
-
-?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,14 +13,22 @@ if(isset($_SESSION["blogid"])){
 <body>
     <header>
         <nav>
-            <div class="container">
-                <h1 id="brand" class="p-2">Raldblog</h1>
-            </div>
+        <div class="container">
+                <h4 id="brand" class="p-2">Raldblog</h4>
+            </div>      
         </nav>
     </header>
     <div class="container">
         <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-12 m-auto">
+            <?php
+
+session_start();
+
+if(isset($_SESSION["blogid"])){
+    echo "<script>window.location.href='./dashboard.php';</script>";
+}
+?>
                 <br>
                 <form method="POST" action="../Classes/controller.php" class="form-group">
                     <label>email</label>
@@ -42,7 +42,8 @@ if(isset($_SESSION["blogid"])){
         </div>
     </div>
     <footer>
-        <br><br><br><br><br><br><br><br>
+        <br><br><br><br>
+        <br><br><br><br>
         <center>
             <p>&copy; Raldblog</p>
             <p>made with <i class="fa fa-heart text-danger"></i> by hycient</p>
@@ -51,7 +52,9 @@ if(isset($_SESSION["blogid"])){
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script>
-        $(document).ready(() => {});
+        $(document).ready(() => {
+
+        });
     </script>
 </body>
 

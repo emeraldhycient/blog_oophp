@@ -1,5 +1,4 @@
 <?php
-
 include_once "api.php";
 
 $api = new api();
@@ -7,7 +6,19 @@ $api = new api();
 // submit comments
 
 if(isset($_POST["comment"])){
-    echo "success";
+    $commentor = $_POST["commentor"];
+     $comment = $_POST["comments"];
+     $email = $_POST["email"];
+     $postid = $_POST["postid"];
+    $message = $api->submitcomment($commentor,$comment,$email,$postid);
+    if($message["message"] == "comment uploaded successfully"){
+        echo "<script>
+        alert('comment submitted successfully');
+        window.location.href='../views/mainview.php?id=".$postid."'
+        </script>";
+    }else{
+        echo json_encode($message);
+    }
 }
 
 // fetch all coment native to a single post
@@ -16,23 +27,19 @@ if(isset($_POST["post_id_in_comment"]))
     $id = $api->filter($_POST["post_id_in_comment"]);
     $rows = $api->allcomment($id);
     if($rows["message"] == "success"){
-        $temp = '
-        <div class="card">
-        <div class="card-header">
-        <h4>'.$rows["data"]->commentor.'</h4>
-        </div>
-<div class="card-body">
-<p>'.$rows["data"]->comment.'</p>
-</div>
-<div class="card-footer">
-<p>'.$rows["data"]->email.'</p> 
-</div>
-        </div>
-        ';
-        echo $temp;
+         while($row = mysqli_fetch_object($rows["data"])){
+             $temp = '
+             <div class="card mb-3">
+             <div class="card-header"><p class="card-title">'.$row->commentor.'</p><p>'.$row->email.'</p></div>
+             <div class="card-body"><p class="">'.$row->comment.'</p></div>
+             </div>
+             ';
+             echo $temp;
+         }
     }else{
-        echo  json_encode($rows);
+        echo json_encode($rows);
     }
+             
 }
 
 //fetching related post in singleview page
@@ -45,7 +52,7 @@ if(isset($_POST["post_id_in_comment"]))
                    <img src="../blogphoto/'.$row->photo.'" class="img-thumbnail" style="width:120px;10p%;float:right;">
              <div class="">
              <h6>'.$row->title.'</h6>
-                <p><small>'. substr($row->textz,0,100).'</small><a href="./views/mainview.php?id='.$row->id.'">..readmore</a></p>
+                <p><small>'. substr($row->textz,0,150).'</small><a href="./views/mainview.php?id='.$row->id.'">..readmore</a></p>
                <p><strong class="text-danger">Author:</strong><small class="pl-5 text-info">'.$row->date.'</small></p>
              </div>
              </div>
@@ -69,7 +76,7 @@ if(isset($_POST["mainpost"]))
                          </div>
                          <div class="card-body">
                         <img src="./blogphoto/'.$row->photo.'" class="img-thumbnail" style="width:100%;height:300px">
-                        <p><small>'. substr($row->textz,0,100).'</small><a href="./views/mainview.php?id='.$row->id.'">..readmore</a></p>
+                        <p><small>'. substr($row->textz,0,200).'</small><a href="./views/mainview.php?id='.$row->id.'">..readmore</a></p>
                         </div></div><br>
                         </div>
         ';
@@ -93,12 +100,12 @@ if(isset($_POST["postid"])){
                        <p>'.$rows->textz.'</p>
                        </div></div><br>
                        <h6>leave a comment *</h6>
-                       <form method="post" action="../classes/controller.php" class="form-group"  id="commentform">
-                       <input type="text" class="form-control" name="commentor" placeholder="name"><br>
-                       <input type="email" class="form-control" name="email" placeholder="email"><br>
-                       <textarea class="form-control" name="comment" placeholder="comment...."></textarea><br>
+                       <form action="../classes/controller.php" method="post" class="form-group">
+                       <input type="text" class="form-control" name="commentor" placeholder="name" required important><br>
+                       <input type="text" class="form-control" name="email" placeholder="email"><br>
+                       <textarea class="form-control" name="comments" placeholder="comment...." required important></textarea><br>
                        <input type="hidden" name="postid" value="'.$rows->id.'" >
-                       <input type="submit" name="submit" class="btn btn-info">
+                       <input type="submit" name="comment" class="btn btn-info">
                        </form>
                        </div>
         ';
