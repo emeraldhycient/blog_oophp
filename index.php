@@ -13,8 +13,16 @@
         <nav>
             <div class="container">
                 <h4 id="brand" class="p-2">Raldblog</h4>
-                <div style="float:right;margin-top:-50px;">
-                  <h6 class="p-2"><a href="./views/login.php">Dashboard<i class="fa fa-users pl-2"></i></a></h6>
+                <div style="display:flex;align-items:center;margin-top:-50px;float:right;">
+                <h6 class="p-2"><a href="./views/login.php">Dashboard<i class="fa fa-users pl-2"></i></a></h6>
+                <?php
+                session_start();
+                if(isset($_SESSION["blogid"])){
+                    echo '<h6 class="p-2"><a href="./classes/controller.php?logout=logout">logout<i class="fa fa-sign-out pl-2"></i></a></h6>';
+                }else{
+                  echo '<h6 class="p-2"><a href="./views/login.php">signin<i class="fa fa-sign-in pl-2"></i></a></h6>';
+                }
+                ?>
                 </div>
             </div>
         </nav>

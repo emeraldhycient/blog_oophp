@@ -3,6 +3,30 @@ include_once "api.php";
 
 $api = new api();
 
+if(isset($_POST["allPostDashboard"])){
+        $rows = $api->allPostDashboard();
+        if($rows["message"] == "success"){
+            while($row = $rows["data"]->fetch_object()){
+            $temp = '
+                  <div class="card">
+                  <div class="card-header">
+                  <h6>'.$row->title.'<small></small></h6>
+                  <span>'.$row->date.'</span>
+                  <span class="text-danger">category: '.$row->cat.'</span>
+                  </div>
+                  <div class="cardbody">
+                  <img src="../blogphoto/'.$row->photo.'" class="img-thumbnail w-100" style="height:300px;">
+                  <p>'.$row->textz.'</p>
+                  </div>
+                  </div>
+            ';
+            echo $temp;
+            }
+        }else{
+            echo json_encode($rows["message"]);
+        }
+}
+
 // submit comments
 
 if(isset($_POST["comment"])){
@@ -52,7 +76,7 @@ if(isset($_POST["post_id_in_comment"]))
                    <img src="../blogphoto/'.$row->photo.'" class="img-thumbnail" style="width:120px;10p%;float:right;">
              <div class="">
              <h6>'.$row->title.'</h6>
-                <p><small>'. substr($row->textz,0,150).'</small><a href="./views/mainview.php?id='.$row->id.'">..readmore</a></p>
+                <p><small>'. substr($row->textz,0,150).'</small><a href="./mainview.php?id='.$row->id.'">..readmore</a></p>
                <p><strong class="text-danger">Author:</strong><small class="pl-5 text-info">'.$row->date.'</small></p>
              </div>
              </div>
@@ -138,7 +162,7 @@ if(isset($_POST["single"])){
 
 // logout
 if(isset($_GET["logout"])){
-      $api->logout();
+     echo  $api->logout();
 }
 // login
 if(isset($_POST["login"])){

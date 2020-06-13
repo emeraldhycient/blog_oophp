@@ -17,7 +17,7 @@ class Api {
         $sql = "SELECT * FROM blog ORDER BY id DESC";
         $q = $this->con->query($sql);
         if($q){
-            if($q->num_rows > 1){
+            if($q->num_rows > 0){
                return $q;
             }else{
             return array("data" => "no row found" );
@@ -26,12 +26,31 @@ class Api {
             return array("error" => $this->con->error);
         }
     }
+     
+    // get all post for dashboard
+    public function allPostDashboard(){
+        $id = $_SESSION["blogid"];
+        $sql = "SELECT * FROM blog WHERE userid='$id'";
+        $q = $this->con->query($sql);
+        $data = [];
+        if($q){
+              if($q->num_rows > 0){
+                   $data["message"] = "success";
+                   $data["data"] = $q;
+              }else{
+                  $data["message"] = "you dont have any post currently";
+              }
+        }else{
+             $data["message"] = $this->con->error;
+        }
+        return $data;
+    }
 
     public function relatedpost(){
         $sql = "SELECT * FROM blog ORDER BY id DESC LIMIT 5";
         $q = $this->con->query($sql);
         if($q){
-            if($q->num_rows > 1){
+            if($q->num_rows > 0){
                return $q;
             }else{
             return array("data" => "no row found" );
@@ -156,7 +175,7 @@ class Api {
 //logout
    public function logout(){
        session_destroy();
-       return "<script>window.location.href='./index.php'</script>";
+       return "<script>window.location.href='../index.php'</script>";
     }
 
     // filter  input
