@@ -12,6 +12,49 @@ class Api {
         $this->con = new mysqli("localhost","root","","blog");
     }
 
+  public function deletebyid($deleteid){
+    $deleteid = $this->filter($deleteid);
+      $sql = "DELETE FROM blog WHERE id='$deleteid'";
+      $message = [];
+      if($this->con->query($sql)){
+        return "<script>window.location.href='../views/dashboard.php';</script>";
+      }else{
+          return $message = $this->con->error;
+      }
+  }
+
+// edit post 
+public function editpost($title,$photo,$textz,$cat,$edit_id){
+    $title = $this->filter($title);
+    $cat = $this->filter($cat);
+    $edit_id = $this->filter($edit_id);
+    $userid = $_SESSION["blogid"];
+    $textz = $this->filter($textz);
+    $message =[];
+       if(!empty($photo["name"])){
+        $path = "../blogphoto/".basename($photo["name"]);
+         $photoname = $photo["name"];
+         $sql = "UPDATE  blog SET title='$title',photo='$photoname',textz='$textz',userid='$userid',cat='$cat' WHERE id=' $edit_id'";
+         if(move_uploaded_file($photo["tmp_name"],$path)){
+                   if($this->con->query($sql)){
+                       $message = "submitted successfully";
+                   }else{
+                       $message = $this->con->error;
+                   }
+         }else{
+              $message = "unable to save image";       
+         }
+       }else{
+        $sql = "UPDATE  blog SET title='$title',textz='$textz',userid='$userid',cat='$cat' WHERE id=' $edit_id'";
+        if($this->con->query($sql)){
+            $message = "submitted successfully";
+        }else{
+            $message = $this->con->error;
+        }
+       }
+       return $message;
+}
+
     // new post
     public function newpost($title,$photo,$textz,$cat){
         $title = $this->filter($title);

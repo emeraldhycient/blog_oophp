@@ -3,8 +3,12 @@ include_once "api.php";
 
 $api = new api();
 
+ if(isset($_POST["delete_id"])){
+     echo $api->deletebyid($_POST["delete_id"]);
+ }
+
 if(isset($_POST["editpost"])){
-    
+    echo $api->editpost($_POST["title"],$_FILES["photo"],$_POST["textz"],$_POST["cat"],$_POST["edit_id"]);
 }
 
 if(isset($_POST["submitpost"])){
@@ -41,7 +45,7 @@ if(isset($_POST["allPostDashboard"])){
                 $style ='style="height:300px;width:100%"';
             $temp = '
             <div class="card mb-3">
-            <div class="card-header">
+                 <div class="card-header">
                   <h6>'.$row->title.'<small></small></h6>
                   <span>'.$row->date.'</span>
                   <span class="text-danger">category: '.$row->cat.'</span>
@@ -51,8 +55,11 @@ if(isset($_POST["allPostDashboard"])){
                                     <p class="p-2">'.$row->textz.'</p>
                   </div>
                   <div class="card-footer">
-                  <button class="btn btn-danger"><i class="fa fa-trash pr-1"></i>delete</button>
-                  <button class="btn btn-primary"><a href="./edit.php?edit_id='.$row->id.'" class="text-white"><i class="fa fa-edit pr-1"></i>edit</a></button>
+                  <form action="../classes/controller.php" method="post" class="offset-3">
+                  <input type="hidden" value="'.$row->id.'" name="delete_id">
+                  <button type="submit" class="btn btn-danger"><i class="fa fa-trash pr-1"></i>delete</button>
+                  </form>
+                  <button class="btn btn-primary offset-6" style="margin-top:-67px;"><a href="./edit.php?edit_id='.$row->id.'" class="text-white"><i class="fa fa-edit pr-1"></i>edit</a></button>
                   </div>
                   </div>
             ';
