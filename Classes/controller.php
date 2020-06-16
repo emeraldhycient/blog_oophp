@@ -3,20 +3,56 @@ include_once "api.php";
 
 $api = new api();
 
+if(isset($_POST["editpost"])){
+    
+}
+
+if(isset($_POST["submitpost"])){
+  echo   $api->newpost($_POST["title"],$_FILES["photo"],$_POST["textz"],$_POST["cat"]);
+}
+
+if(isset($_POST["allMediaDashboard"])){
+    $rows = $api->allPostDashboard();
+    if($rows["message"] == "success"){
+        while($row = $rows["data"]->fetch_object()){
+            $style ='style="height:300px;width:100%"';
+        $temp = '
+              <div class="card mb-3">
+              <div class="cardbody">
+              '.$api->mediatag ($row->photo,'../blogphoto/',$style).'
+                            </div>
+              <div class="card-footer">
+              <p>'.$row->title.'</p>
+              <small>'.$row->date.'</small>
+              </div>
+              </div>
+        ';
+        echo $temp;
+        }
+    }else{
+        echo json_encode($rows["message"]);
+    }
+}
+
 if(isset($_POST["allPostDashboard"])){
         $rows = $api->allPostDashboard();
         if($rows["message"] == "success"){
             while($row = $rows["data"]->fetch_object()){
+                $style ='style="height:300px;width:100%"';
             $temp = '
-                  <div class="card">
-                  <div class="card-header">
+            <div class="card mb-3">
+            <div class="card-header">
                   <h6>'.$row->title.'<small></small></h6>
                   <span>'.$row->date.'</span>
                   <span class="text-danger">category: '.$row->cat.'</span>
                   </div>
                   <div class="cardbody">
-                  <img src="../blogphoto/'.$row->photo.'" class="img-thumbnail w-100" style="height:300px;">
-                  <p>'.$row->textz.'</p>
+                  '.$api->mediatag ($row->photo,'../blogphoto/',$style).'
+                                    <p class="p-2">'.$row->textz.'</p>
+                  </div>
+                  <div class="card-footer">
+                  <button class="btn btn-danger"><i class="fa fa-trash pr-1"></i>delete</button>
+                  <button class="btn btn-primary"><a href="./edit.php?edit_id='.$row->id.'" class="text-white"><i class="fa fa-edit pr-1"></i>edit</a></button>
                   </div>
                   </div>
             ';
@@ -70,10 +106,11 @@ if(isset($_POST["post_id_in_comment"]))
      if(isset($_POST["relatedpost"])){
         $rows =$api->relatedpost();
         while($row = mysqli_fetch_object($rows)){
+            $style ='style="width:120px;10p%;float:right;"';
             $data = '
             <hr>
              <div class="mb-2">
-                   <img src="../blogphoto/'.$row->photo.'" class="img-thumbnail" style="width:120px;10p%;float:right;">
+             '.$api->mediatag ($row->photo,'../blogphoto/',$style).'
              <div class="">
              <h6>'.$row->title.'</h6>
                 <p><small>'. substr($row->textz,0,150).'</small><a href="./mainview.php?id='.$row->id.'">..readmore</a></p>
@@ -90,6 +127,7 @@ if(isset($_POST["mainpost"]))
 {
     $rows =$api->mainpost();
     while($row = mysqli_fetch_object($rows)){
+        $style = 'style="width:100%;height:300px"';
         $data = '
         <hr>
          <div>
@@ -99,8 +137,8 @@ if(isset($_POST["mainpost"]))
                          <p><small>authour:</small><small class="p-2">'.$row->date.'</small><small>Category: '.$row->cat.'</small></p>
                          </div>
                          <div class="card-body">
-                        <img src="./blogphoto/'.$row->photo.'" class="img-thumbnail" style="width:100%;height:300px">
-                        <p><small>'. substr($row->textz,0,200).'</small><a href="./views/mainview.php?id='.$row->id.'">..readmore</a></p>
+                         '.$api->mediatag ($row->photo,'./blogphoto/',$style).'
+                         <p><small>'. substr($row->textz,0,200).'</small><a href="./views/mainview.php?id='.$row->id.'">..readmore</a></p>
                         </div></div><br>
                         </div>
         ';
@@ -112,6 +150,7 @@ if(isset($_POST["mainpost"]))
 if(isset($_POST["postid"])){
     $id = $api->filter($_POST["postid"]);
     $rows = $api->single($id);
+    $style = 'style="width:100%;height:300px"';
         $temp = '
         <div>
         <div class="card">
@@ -120,7 +159,7 @@ if(isset($_POST["postid"])){
                         <p><small>authour:</small><small class="p-2">'.$rows->date.'</small><small>Category: '.$rows->cat.'</small></p>
                         </div>
                         <div class="card-body">
-                       <img src="../blogphoto/'.$rows->photo.'" class="img-thumbnail" style="width:100%;height:300px">
+                        '.$api->mediatag ($rows->photo,'./blogphoto/',$style).'
                        <p>'.$rows->textz.'</p>
                        </div></div><br>
                        <h6>leave a comment *</h6>
@@ -140,6 +179,7 @@ if(isset($_POST["postid"])){
 if(isset($_POST["single"])){
     
     $datas = $api->entrypost();
+    $style = 'style="width:100%;height:300px;"';
     $data = '
     <div class="card">
     <div class="card-header">
@@ -147,7 +187,7 @@ if(isset($_POST["single"])){
     </div>
     <div class="card-body">
           <div class="img">
-          <img src="./blogphoto/'.$datas->photo.'" class="img-thumbnail" style="width:100%;height:300px;">
+          '.$api->mediatag ($datas->photo,'./blogphoto/',$style).'
           </div>
           <div>
           <p><strong>author</strong><small class="pl-3">'.$datas->date.'</small></p>

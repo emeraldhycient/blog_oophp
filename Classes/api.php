@@ -12,6 +12,28 @@ class Api {
         $this->con = new mysqli("localhost","root","","blog");
     }
 
+    // new post
+    public function newpost($title,$photo,$textz,$cat){
+        $title = $this->filter($title);
+        $cat = $this->filter($cat);
+        $path = "../blogphoto/".basename($photo["name"]);
+         $photoname = $photo["name"];
+         $userid = $_SESSION["blogid"];
+         $textz = $this->filter($textz);
+         $sql = "INSERT INTO blog(title,photo,textz,userid,cat) VALUES ('$title','$photoname','$textz','$userid','$cat')";
+         $message =[];
+         if(move_uploaded_file($photo["tmp_name"],$path)){
+                   if($this->con->query($sql)){
+                       $message = "submitted successfully";
+                   }else{
+                       $message = $this->con->error;
+                   }
+         }else{
+              $message = "unable to save image";       
+         }
+         return $message;
+    }
+
        // fetchin post for index page
     public function mainpost(){
         $sql = "SELECT * FROM blog ORDER BY id DESC";
@@ -26,11 +48,31 @@ class Api {
             return array("error" => $this->con->error);
         }
     }
+
+    // get all medias for dashboard user
+    
+    public function allMediaDashboard(){
+        $id = $_SESSION["blogid"];
+        $sql = "SELECT id,photo FROM blog WHERE userid='$id' ORDER BY id DESC";
+        $q = $this->con->query($sql);
+        $data = [];
+        if($q){
+              if($q->num_rows > 0){
+                   $data["message"] = "success";
+                   $data["data"] = $q;
+              }else{
+                  $data["message"] = "you dont have any post currently";
+              }
+        }else{
+             $data["message"] = $this->con->error;
+        }
+        return $data;
+    }
      
-    // get all post for dashboard
+    // get all post for dashboard user
     public function allPostDashboard(){
         $id = $_SESSION["blogid"];
-        $sql = "SELECT * FROM blog WHERE userid='$id'";
+        $sql = "SELECT * FROM blog WHERE userid='$id' ORDER BY id DESC";
         $q = $this->con->query($sql);
         $data = [];
         if($q){
@@ -176,6 +218,18 @@ class Api {
    public function logout(){
        session_destroy();
        return "<script>window.location.href='../index.php'</script>";
+    }
+
+    //generate media type
+    public function mediatag ($media,$path,$style){
+         $ext = pathinfo($media,PATHINFO_EXTENSION);
+         if(in_array($ext,['gif','png','jpeg','jpg'])){
+            return '<img src="'.$path.$media.'" class="img-thumbnail" '.$style.'></img>';
+         }elseif(in_array($ext,['mp4','mpg','mpeg',"m4v"])){
+              return '<video src="'.$path.$media.'" '.$style.' controls></video>';
+         }else{
+            return '<img src="" alt="unrecognised media type">';
+         }
     }
 
     // filter  input
