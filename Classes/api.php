@@ -12,6 +12,8 @@ class Api {
         $this->con = new mysqli("localhost","root","","blog");
     }
 
+
+       //delete post
   public function deletebyid($deleteid){
     $deleteid = $this->filter($deleteid);
       $sql = "DELETE FROM blog WHERE id='$deleteid'";
@@ -243,6 +245,7 @@ public function editpost($title,$photo,$textz,$cat,$edit_id){
                 if(password_verify($password,$row->pass)){
                       $_SESSION["blogid"] = $row->unqid;
                       $_SESSION["username"]  = $row->username;                       
+                      $_SESSION["avatar"]  = $row->photo;                       
                       echo "<script>window.location.href='../views/dashboard.php'</script>";
                     }else{
                     echo "invalid password";

@@ -89,9 +89,9 @@
     </div>
   </div>
 </div>
-              <div class="allpost">
+        <div class="allpost">
               
-              </div>
+              </>
         </div>
         </div>
     </div>

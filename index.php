@@ -134,7 +134,7 @@
   </a>
 </div>
 <p></p>
-<h5 class="mt-5 mb-2 text-default"> New Arrival </h5>
+<h5 class="mt-5 mb-2 text-default"> Random News </h5>
     <div class="uppernews mb-5">
           </div>  
           <h5>Featured Post</h5>    
