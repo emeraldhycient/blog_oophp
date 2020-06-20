@@ -12,7 +12,22 @@ class Api {
         $this->con = new mysqli("localhost","root","","blog");
     }
 
-
+    //fetch post by category
+    public function select_post_by_cat($cat){
+        $cat  = $this->filter($cat);
+         $sql = "SELECT * FROM blog WHERE cat='$cat' ORDER BY id DESC";
+        $q = $this->con->query($sql);
+        if($q){
+            if($q->num_rows > 0){
+               return $q;
+            }else{
+            return array("data" => "couldn't find any post in these category" );
+            }
+        }else{
+            return array("error" => $this->con->error);
+        }
+    }
+ 
        //delete post
   public function deletebyid($deleteid){
     $deleteid = $this->filter($deleteid);

@@ -3,6 +3,27 @@ include_once "api.php";
 
 $api = new api();
 
+if(isset($_POST["cat"])){
+  $select_post_by_cat = $api->select_post_by_cat($_POST["cat"]);
+    while($row = $select_post_by_cat->fetch_object()){
+            $style = 'style="width:100%;height:300px"';
+        $data = '
+        <hr>
+         <div>
+         <div class="card">
+         <div class="card-header">
+                         <h6>'.$row->title.'</h6>
+                         <p><small>authour:</small><small class="p-2">'.$row->date.'</small><small>Category: '.$row->cat.'</small></p>
+                         </div>
+                         <div class="card-body">
+                         '.$api->mediatag ($row->photo,'../blogphoto/',$style).'
+                         <p><small>'. substr($row->textz,0,200).'</small><a href="./mainview.php?id='.$row->id.'">..readmore</a></p>
+                        </div></div><br>
+                        </div>
+        ';
+        echo $data;
+}}
+
  if(isset($_POST["delete_id"])){
      echo $api->deletebyid($_POST["delete_id"]);
  }
